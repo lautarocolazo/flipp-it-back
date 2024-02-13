@@ -1,4 +1,4 @@
-# Project Title
+# FlippIt
 
 FlippIt is a free flashcards software.
 
