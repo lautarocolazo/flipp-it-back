@@ -32,10 +32,10 @@ router.get("/decks/:id", async (req, res) => {
 
 // Create new deck
 router.post("/decks", async (req, res) => {
-  const newFolder = await prisma.deck.create({
+  const newDeck = await prisma.deck.create({
     data: req.body,
   });
-  res.json(newFolder);
+  res.json(newDeck);
 });
 
 // Update deck by id
