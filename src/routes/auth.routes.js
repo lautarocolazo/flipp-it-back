@@ -1,6 +1,8 @@
 import { Router } from "express";
 import { prisma } from "../db.js";
-import { hashSync } from "bcrypt";
+import { hashSync, compareSync } from "bcrypt"; // This is to hash and verify passwords
+import jwt from "jsonwebtoken"; // This module that I installed is to get JWT for auth
+import { JWT_SECRET } from "../secrets.js";
 
 const router = Router();
 
@@ -23,6 +25,36 @@ router.post("/signup", async (req, res) => {
 	});
 
 	res.json(user);
+});
+
+// Login user
+router.post("/login", async (req, res) => {
+	const { email, password } = req.body;
+
+	let user = await prisma.user.findFirst({ where: { email } });
+
+	if (!user) {
+		throw Error("User does not exist.");
+	}
+
+	if (!compareSync(password, user.password)) {
+		throw Error("Incorrect password");
+	}
+
+	const token = jwt.sign(
+		{
+			userId: user.id,
+		},
+		JWT_SECRET,
+	);
+
+	res.json({
+		user: {
+			id: user.id,
+			username: user.username,
+		},
+		token,
+	});
 });
 
 export default router;
